@@ -7,7 +7,6 @@ depcomp
 install-sh
 ltmain.sh
 Makefile.in
-sys-config.h.in
 missing
 py-compile
 libtool
