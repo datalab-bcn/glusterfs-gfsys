@@ -19,7 +19,7 @@ if libtool --help 2>&1 | grep -q quiet; then
     AM_LIBTOOLFLAGS="$AM_LIBTOOLFLAGS --quiet"
 fi
 
-AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_HEADERS([sys-config.h])
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile

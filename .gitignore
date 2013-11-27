@@ -2,6 +2,7 @@ aclocal.m4
 autom4te.cache
 build
 config.*
+sys-config.h*
 configure
 depcomp
 install-sh
@@ -22,3 +23,5 @@ libtool
 .deps
 Makefile
 stamp-h1
+
+test/gfsys
