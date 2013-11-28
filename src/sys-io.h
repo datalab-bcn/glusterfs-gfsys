@@ -35,7 +35,7 @@
                                             (sys_callback_f, __sys_io_free))) \
     { \
         uintptr_t * __sys_io_data; \
-        logD("SYS-IO: submitting '" #_name "'"); \
+        logT("SYS-IO: submitting '" #_name "'"); \
         __sys_io_data = sys_io_add(SYS_IO_PROXY(send_##_name), 0, \
                                    SYS_MAX(SYS_CALLS_SIZE(send_##_name), \
                                            SYS_CALLS_SIZE(recv_##_name)), \
@@ -50,7 +50,7 @@
                              err_t __sys_resume_error \
                              SYS_MARG(SYS_ARGS_DECL(_recv))) \
     { \
-        logD("SYS-IO: resuming '" #_name "'"); \
+        logT("SYS-IO: resuming '" #_name "'"); \
         sys_io_item_t * __sys_resume_item; \
         sys_async_queue_t * __sys_resume_queue; \
         uintptr_t __sys_resume_owner, * __sys_resume_args; \
@@ -79,14 +79,14 @@
 #define _SYS_IO_DEFINE(_name, _send) \
     void SYS_GLUE(free$, _name)(uintptr_t * args) \
     { \
-        logD("SYS-IO: freeing '" #_name "'"); \
+        logT("SYS-IO: freeing '" #_name "'"); \
         SYS_ARGS_FREE(args, _recv); \
         _sys_io_release(args); \
     } \
     void SYS_IO_PROXY(send_##_name)(uintptr_t * data) \
     { \
         __unused SYS_ARGS_TYPE(send_##_name) * args; \
-        logD("SYS-IO: proxy to '" #_name "'"); \
+        logT("SYS-IO: proxy to '" #_name "'"); \
         args = (SYS_ARGS_TYPE(send_##_name) *)data; \
         send_##_name(SYS_ARGS_LOAD(args, _send)); \
     } \

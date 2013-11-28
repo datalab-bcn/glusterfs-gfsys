@@ -89,7 +89,7 @@
 #define SYS_GF_FOP(_fop, _extra...) \
     ({ \
         uintptr_t * __sys_gf_data; \
-        logD("SYS-GF: fop '" #_fop "'"); \
+        logT("SYS-GF: fop '" #_fop "'"); \
         sys_gf_args_t * __sys_gf_args; \
         __sys_gf_data = sys_calls_owned_add(&sys_async_owned_calls->tail, \
                                             sys_gf_fop_##_fop##_free, \
@@ -106,7 +106,7 @@
 #define SYS_GF_CBK(_fop, _extra...) \
     ({ \
         uintptr_t * __sys_gf_data; \
-        logD("SYS-GF: cbk '" #_fop "'"); \
+        logT("SYS-GF: cbk '" #_fop "'"); \
         sys_gf_args_t * __sys_gf_args; \
         __sys_gf_data = sys_calls_owned_add(&sys_async_owned_calls->tail, \
                                             sys_gf_cbk_##_fop##_free, \
@@ -123,7 +123,7 @@
 #define SYS_GF_FOP_CALL(_fop, _extra...) \
     ({ \
         uintptr_t * __sys_gf_data; \
-        logD("SYS-GF: fop call '" #_fop "'"); \
+        logT("SYS-GF: fop call '" #_fop "'"); \
         sys_gf_args_t * __sys_gf_args; \
         __sys_gf_data = sys_calls_owned_add(&sys_async_owned_calls->tail, \
                                             sys_gf_fop_call_##_fop##_free, \
@@ -141,7 +141,7 @@
 #define SYS_GF_CBK_CALL(_fop, _extra...) \
     ({ \
         uintptr_t * __sys_gf_data; \
-        logD("SYS-GF: cbk call '" #_fop "'"); \
+        logT("SYS-GF: cbk call '" #_fop "'"); \
         sys_gf_args_t * __sys_gf_args; \
         __sys_gf_data = sys_calls_owned_add(&sys_async_owned_calls->tail, \
                                             sys_gf_cbk_call_##_fop##_free, \

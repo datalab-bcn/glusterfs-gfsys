@@ -76,7 +76,7 @@
         __sys_delay_data = sys_delay_add(SYS_PROXY(_name), __sys_delay_extra, \
                                          SYS_CALLS_SIZE(_name), \
                                          __sys_delay_refs, __sys_delay_ms); \
-        logD("SYS-DELAY: delay %ld (%lu, %u) '" #_name "' %p", \
+        logT("SYS-DELAY: delay %ld (%lu, %u) '" #_name "' %p", \
              __sys_delay_ms, __sys_delay_extra, __sys_delay_refs, \
              __sys_delay_data); \
         SYS_MARSHALL(__sys_delay_data + __sys_delay_extra, _name, _args); \
@@ -330,7 +330,7 @@ static inline void sys_delay_release(uintptr_t * data)
 {
     uintptr_t owner, * delay;
 
-    logD("SYS-DELAY: release %p", data);
+    logT("SYS-DELAY: release %p", data);
     delay = data - SYS_DELAY_SIZE;
     owner = sys_calls_owned_owner(delay);
     if (owner == sys_async_self->head.id)
@@ -351,7 +351,7 @@ static inline bool sys_delay_cancel(uintptr_t * data, bool notify)
     uintptr_t owner, * delay;
     uint8_t * flags;
 
-    logD("SYS-DELAY: cancel %p", data);
+    logT("SYS-DELAY: cancel %p", data);
     delay = data - SYS_DELAY_SIZE;
     flags = sys_calls_owned_flags(delay);
     if (atomic_bit_set(flags, SYS_DELAY_DONE_BIT, memory_order_seq_cst) != 0)
@@ -378,12 +378,12 @@ static inline bool sys_delay_execute(uintptr_t * data, err_t error)
     uintptr_t owner, * delay;
     uint8_t * flags;
 
-    logD("SYS-DELAY: execute %p", data);
+    logT("SYS-DELAY: execute %p", data);
     delay = data - SYS_DELAY_SIZE;
     flags = sys_calls_owned_flags(delay);
     if (atomic_bit_set(flags, SYS_DELAY_DONE_BIT, memory_order_seq_cst) != 0)
     {
-        logD("SYS-DELAY: already completed %p", data);
+        logT("SYS-DELAY: already completed %p", data);
         sys_delay_release(data);
 
         return false;

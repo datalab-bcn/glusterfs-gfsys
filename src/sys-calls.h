@@ -109,7 +109,7 @@ typedef struct _sys_calls
 #define SYS_CALLS_DEFINE(_name, _args) \
     void SYS_PROXY(_name)(uintptr_t * data) \
     { \
-        logD("SYS-CALLS: proxy to '" #_name "'"); \
+        logT("SYS-CALLS: proxy to '" #_name "'"); \
         __unused SYS_ARGS_TYPE(_name) * args = (SYS_ARGS_TYPE(_name) *)data; \
         _name(SYS_ARGS_LOAD(args, _args)); \
         SYS_ARGS_FREE(args, _args); \
@@ -132,7 +132,7 @@ typedef struct _sys_calls
                                      (uintptr_t, __sys_owned_owner), \
                                      (uint32_t, __sys_owned_refs))) \
     { \
-        logD("SYS-CALLS: submitting '" #_name "'"); \
+        logT("SYS-CALLS: submitting '" #_name "'"); \
         uintptr_t * __sys_owned_data; \
         __sys_owned_data = sys_calls_owned_add(__sys_owned_end, \
                                                SYS_PROXY(_name), \

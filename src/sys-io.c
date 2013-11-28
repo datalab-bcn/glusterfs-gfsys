@@ -150,7 +150,7 @@ sys_io_item_t * sys_io_sleep(int64_t delay)
 
 SYS_ASYNC_TO_DEFINE(__sys_io_release, ((sys_io_item_t *, item)))
 {
-    logD("SYS-IO: release %p", item);
+    logT("SYS-IO: release %p", item);
     sys_calls_owned_release(&sys_async_owned_calls->head, (uintptr_t *)item);
 }
 
@@ -175,7 +175,7 @@ void __sys_io_core(void)
         }
     }
 
-    logD("SYS-IO: execute %p", item);
+    logT("SYS-IO: execute %p", item);
     sys_calls_owned_execute((uintptr_t *)item);
 }
 

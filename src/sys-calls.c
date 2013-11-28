@@ -362,7 +362,7 @@ uintptr_t * sys_calls_add(sys_calls_end_t * tail, sys_callback_f callback,
 
     atomic_store(&node->callback, callback, memory_order_release);
 
-    logD("SYS-CALLS: add %p (%d)", node, node->refs);
+    logT("SYS-CALLS: add %p (%d)", node, node->refs);
 
     tail->position = pos;
 
@@ -410,7 +410,7 @@ uintptr_t * sys_calls_get(sys_calls_end_t * head)
 
         if (callback != SYS_CALLS_NULL)
         {
-            logD("SYS-CALLS: get %p", node);
+            logT("SYS-CALLS: get %p", node);
             return (uintptr_t *)node + SYS_CALLS_NODE_SIZE;
         }
     }
@@ -424,7 +424,7 @@ void sys_calls_release(sys_calls_end_t * head, uintptr_t * data)
     sys_callback_f callback;
 
     node = (sys_calls_node_t *)(data - SYS_CALLS_NODE_SIZE);
-    logD("SYS-CALLS: release %p (%d)", node, node->refs);
+    logT("SYS-CALLS: release %p (%d)", node, node->refs);
     if (--node->refs > 0)
     {
         return;
@@ -479,7 +479,7 @@ bool sys_calls_process(sys_calls_end_t * head)
 
         if (callback != SYS_CALLS_NULL)
         {
-            logD("SYS-CALLS: process %p", node);
+            logT("SYS-CALLS: process %p", node);
             THIS = node->xl;
             callback((uintptr_t *)node + node->extra);
 
