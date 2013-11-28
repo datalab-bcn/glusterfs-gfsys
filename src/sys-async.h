@@ -356,7 +356,7 @@ static inline bool sys_delay_cancel(uintptr_t * data, bool notify)
     flags = sys_calls_owned_flags(delay);
     if (atomic_bit_set(flags, SYS_DELAY_DONE_BIT, memory_order_seq_cst) != 0)
     {
-        sys_delay_release(delay);
+        sys_delay_release(data);
 
         return false;
     }
