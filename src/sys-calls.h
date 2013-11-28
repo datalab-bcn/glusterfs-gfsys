@@ -45,6 +45,7 @@ typedef struct _sys_calls_node
         };
         struct _sys_calls_node *  next;
     };
+    xlator_t *                    xl;
 } sys_calls_node_t;
 
 typedef struct _sys_calls_owned
@@ -189,6 +190,7 @@ static inline void sys_calls_execute(uintptr_t * data)
     sys_calls_node_t * node;
 
     node = (sys_calls_node_t *)(data - SYS_CALLS_NODE_SIZE);
+    THIS = node->xl;
     node->callback((uintptr_t *)node + node->extra);
 }
 

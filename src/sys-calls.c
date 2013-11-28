@@ -307,6 +307,7 @@ uintptr_t * sys_calls_prepare(sys_calls_end_t * tail, uint32_t extra,
 
     node->size = length;
     node->extra = extra;
+    node->xl = THIS;
 
     data = (uintptr_t *)node;
     ((sys_calls_node_t *)(data + length))->callback = SYS_CALLS_NULL;
@@ -354,6 +355,7 @@ uintptr_t * sys_calls_add(sys_calls_end_t * tail, sys_callback_f callback,
     node->refs = refs + 1;
     node->flags = 0;
     node->error = 0;
+    node->xl = THIS;
 
     data = (uintptr_t *)node;
     ((sys_calls_node_t *)(data + length))->callback = SYS_CALLS_NULL;
@@ -478,6 +480,7 @@ bool sys_calls_process(sys_calls_end_t * head)
         if (callback != SYS_CALLS_NULL)
         {
             logD("SYS-CALLS: process %p", node);
+            THIS = node->xl;
             callback((uintptr_t *)node + node->extra);
 
             head->callbacks++;
