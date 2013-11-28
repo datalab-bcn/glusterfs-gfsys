@@ -41,7 +41,7 @@ typedef struct _sys_lock
     { \
         uintptr_t * __sys_lock_data; \
         __sys_lock_data = sys_delay_prepare(SYS_PROXY(_name), SYS_LOCK_SIZE, \
-                                            SYS_CALLS_SIZE(_name), 1); \
+                                            SYS_CALLS_SIZE(_name), 2); \
         SYS_MARSHALL(__sys_lock_data + SYS_LOCK_SIZE, _name, _args); \
         sys_lock_acquire(__sys_lock_lock, __sys_lock_ms, __sys_lock_data); \
         return __sys_lock_data + SYS_LOCK_SIZE; \
