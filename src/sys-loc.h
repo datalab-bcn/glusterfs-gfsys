@@ -23,6 +23,7 @@
 
 static inline void sys_loc_acquire(loc_t * dst, loc_t * src)
 {
+    memset(dst, 0, sizeof(*dst));
     if (src != NULL)
     {
 again:
@@ -32,10 +33,6 @@ again:
             E(),
             GOTO(retry)
         );
-    }
-    else
-    {
-        memset(dst, 0, sizeof(*dst));
     }
 
     return;
