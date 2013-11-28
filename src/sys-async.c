@@ -358,6 +358,7 @@ uintptr_t * sys_async_add(uint32_t extra, uint32_t size,
 
 SYS_ASYNC_TO_DEFINE(__sys_delay_release, ((uintptr_t *, data)))
 {
+    logD("SYS-DELAY: release %p", data);
     data -= SYS_DELAY_SIZE;
     sys_calls_owned_release(&sys_async_timer_calls->head, data);
 }
@@ -368,6 +369,7 @@ SYS_ASYNC_TO_DEFINE(__sys_delay_cancel, ((uintptr_t *, data),
     sys_async_delay_t * delay;
     int64_t key;
 
+    logD("SYS-DELAY: cancel %p", data);
     data -= SYS_DELAY_SIZE;
     delay = (sys_async_delay_t *)data;
     if (delay->heap.index != -1)
@@ -375,13 +377,13 @@ SYS_ASYNC_TO_DEFINE(__sys_delay_cancel, ((uintptr_t *, data),
         sys_heap_delete(&sys_async_timer_heap, delay->heap.index, &key,
                         k1, k2, k1 - k2);
         delay->heap.index = -1;
+        sys_calls_owned_release(&sys_async_timer_calls->head, data);
     }
     if (notify)
     {
         sys_thread_set_error(ECANCELED);
         sys_calls_owned_execute(data);
     }
-    sys_calls_owned_release(&sys_async_timer_calls->head, data);
     sys_calls_owned_release(&sys_async_timer_calls->head, data);
     sys_async_stats.timers++;
 }
@@ -392,6 +394,7 @@ SYS_ASYNC_TO_DEFINE(__sys_delay_execute, ((uintptr_t *, data),
     sys_async_delay_t * delay;
     int64_t key;
 
+    logD("SYS-DELAY: execute %p", data);
     data -= SYS_DELAY_SIZE;
     delay = (sys_async_delay_t *)data;
     if (delay->heap.index != -1)
@@ -399,10 +402,10 @@ SYS_ASYNC_TO_DEFINE(__sys_delay_execute, ((uintptr_t *, data),
         sys_heap_delete(&sys_async_timer_heap, delay->heap.index, &key,
                         k1, k2, k1 - k2);
         delay->heap.index = -1;
+        sys_calls_owned_release(&sys_async_timer_calls->head, data);
     }
     sys_thread_set_error(error);
     sys_calls_owned_execute(data);
-    sys_calls_owned_release(&sys_async_timer_calls->head, data);
     sys_calls_owned_release(&sys_async_timer_calls->head, data);
     sys_async_stats.timers++;
 }
