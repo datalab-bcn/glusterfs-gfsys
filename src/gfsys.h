@@ -28,6 +28,7 @@
 #include "globals.h"
 #include "xlator.h"
 #include "byte-order.h"
+#include "defaults.h"
 
 #include "sys-config.h"
 #include "sys-base.h"
