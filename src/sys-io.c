@@ -115,33 +115,28 @@ sys_io_item_t * sys_io_sleep(int64_t delay)
     sys_io_item_t * item;
     err_t error;
 
-//    sys_io_stats.sleeps++;
-
-    atomic_bit_set(&sys_io_sleeping, sys_io_id, memory_order_seq_cst);
-    sys_thread_signal_cancel(SYS_SIG(SIGCONT));
-
-    error = 0;
     sys_time_from_serial_rel(&timeout, delay);
     sys_time_abs(&timeout);
 
-    item = sys_io_get(1);
-    while (item == NULL)
+    item = NULL;
+    do
     {
-        error = sys_thread_signal_wait(NULL, SYS_SIG(SIGCONT), &timeout);
-        if (error != 0)
+        atomic_bit_set(&sys_io_sleeping, sys_io_id, memory_order_seq_cst);
+        sys_thread_signal_cancel(SYS_SIG(SIGCONT));
+
+        if (((sys_io_sleeping >> sys_io_id) & 1) != 0)
         {
-            break;
+            error = sys_thread_signal_wait(NULL, SYS_SIG(SIGCONT), &timeout);
+            atomic_bit_clear(&sys_io_sleeping, sys_io_id,
+                             memory_order_seq_cst);
+            if (error != 0)
+            {
+                break;
+            }
         }
+
         item = sys_io_get(1);
-    }
-    if (error == 0)
-    {
-//        sys_io_stats.cancelled++;
-    }
-    else
-    {
-        atomic_bit_clear(&sys_io_sleeping, sys_io_id, memory_order_seq_cst);
-    }
+    } while (item == NULL);
 
     sys_thread_signal_cancel(SYS_SIG(SIGCONT));
 
