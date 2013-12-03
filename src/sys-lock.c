@@ -31,7 +31,23 @@ void sys_lock_terminate(sys_lock_t * lock)
     SYS_ASSERT(lock->first == NULL, "Destroying a lock in use");
 }
 
-SYS_ASYNC_CREATE(sys_lock_release, ((sys_lock_t *, lock)))
+SYS_ASYNC_TO_CREATE(sys_lock_free, ((sys_lock_item_t *, item)))
+{
+    uintptr_t owner;
+
+    owner = sys_calls_owned_owner((uintptr_t *)item);
+    if (sys_async_self->head.id == owner)
+    {
+        sys_calls_owned_release(&sys_async_owned_calls->head,
+                                (uintptr_t *)item);
+    }
+    else
+    {
+        SYS_ASYNC_TO(sys_async_queue_get(owner), sys_lock_free, (item));
+    }
+}
+
+SYS_ASYNC_DEFINE(sys_lock_release, ((sys_lock_t *, lock)))
 {
     sys_lock_item_t * entry, * next;
 
@@ -51,14 +67,18 @@ SYS_ASYNC_CREATE(sys_lock_release, ((sys_lock_t *, lock)))
             }
             else
             {
-                sys_delay_release((uintptr_t *)entry);
+                sys_calls_owned_release(&sys_async_owned_calls->head,
+                                        (uintptr_t *)entry);
             }
 
             return;
         }
 
-        sys_delay_release((uintptr_t *)entry);
+        sys_calls_owned_release(&sys_async_owned_calls->head,
+                                (uintptr_t *)entry);
 
         entry = next;
-    } while (!sys_delay_execute((uintptr_t *)entry, 0));
+    } while ((entry->delay != NULL) && !sys_delay_cancel(entry->delay, false));
+
+    sys_calls_owned_execute((uintptr_t *)entry);
 }

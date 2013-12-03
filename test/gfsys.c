@@ -81,26 +81,21 @@ SYS_DELAY_CREATE(unlock, ((int, id)))
 
 SYS_LOCK_CREATE(lock_func, ((int, id)))
 {
-    err_t error;
+    logD("%u: Lock acquired", id);
 
-    error = sys_thread_get_error();
-    if (error == 0)
-    {
-        logD("%u: Lock acquired", id);
+    SYS_DELAY(1000, unlock, (id));
+}
 
-        SYS_DELAY(1000, unlock, (id));
-    }
-    else
-    {
-        logD("Lock acquisition failed: %d", error);
-    }
+SYS_DELAY_CREATE(lock_func_failed, ())
+{
+    logD("Lock acquisition failed");
 }
 
 SYS_DELAY_CREATE(try_lock, ((int, id)))
 {
     logD("%u: Trying lock", id);
 
-    SYS_LOCK(&lock, 2000, lock_func, (id));
+    SYS_LOCK(&lock, lock_func, (id), SYS_DELAY(2000, lock_func_failed, (), 1));
 }
 /*
 SYS_DELAY_CREATE(sm_test, (SYS_SM_STATE(state)))
@@ -317,7 +312,7 @@ SYS_ASYNC_CREATE(start_timer, ((int64_t, ms)))
 
     data = SYS_DELAY(8000, check_timer, (), 1);
     logD("timer = %p", data);
-    SYS_LOCK(&lock, 2000, lock_func, (1));
+    SYS_LOCK(&lock, lock_func, (1), SYS_DELAY(2000, lock_func_failed, (), 1));
     SYS_DELAY(ms, timer, (ms, data));
     SYS_DELAY(250, try_lock, (2));
     SYS_DELAY(500, try_lock, (3));

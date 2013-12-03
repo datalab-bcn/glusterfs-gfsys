@@ -24,6 +24,7 @@
 typedef struct _sys_lock_item
 {
     struct _sys_lock_item * next;
+    uintptr_t *             delay;
 } sys_lock_item_t;
 
 typedef struct _sys_lock
@@ -37,14 +38,15 @@ typedef struct _sys_lock
 #define SYS_LOCK_DECLARE(_name, _args) \
     SYS_CALLS_DECLARE(_name, _args); \
     SYS_CALLS_WRAPPER(_name, _args, ((sys_lock_t *, __sys_lock_lock), \
-                                     (int64_t, __sys_lock_ms))) \
+                                     (uintptr_t *, __sys_lock_delay))) \
     { \
         uintptr_t * __sys_lock_data; \
-        __sys_lock_data = sys_delay_prepare(SYS_PROXY(_name), SYS_LOCK_SIZE, \
-                                            SYS_CALLS_SIZE(_name), 2); \
-        SYS_MARSHALL(__sys_lock_data + SYS_LOCK_SIZE, _name, _args); \
-        sys_lock_acquire(__sys_lock_lock, __sys_lock_ms, __sys_lock_data); \
-        return __sys_lock_data + SYS_LOCK_SIZE; \
+        __sys_lock_data = sys_lock_add(SYS_PROXY(_name), 0, \
+                                       SYS_CALLS_SIZE(_name), \
+                                       __sys_lock_delay); \
+        SYS_MARSHALL(__sys_lock_data, _name, _args); \
+        sys_lock_acquire(__sys_lock_lock, __sys_lock_data); \
+        return __sys_lock_data; \
     }
 
 #define SYS_LOCK_DEFINE(_name, _args) SYS_CALLS_DEFINE(_name, _args)
@@ -53,34 +55,51 @@ typedef struct _sys_lock
     SYS_LOCK_DECLARE(_name, _args); \
     SYS_LOCK_DEFINE(_name, _args)
 
-#define SYS_LOCK(_lock, _ms, _name, _args) \
-    SYS_WRAP(_name, (_lock, _ms), _args)
+#define SYS_LOCK(_lock, _name, _args, _delay...) \
+    SYS_WRAP(_name, (_lock, SYS_SELECT(_delay, NULL, ## _delay)), _args)
 
 #define SYS_UNLOCK(_lock) sys_lock_release(_lock)
 
 void sys_lock_initialize(sys_lock_t * lock);
 void sys_lock_terminate(sys_lock_t * lock);
 
-static inline void sys_lock_acquire(sys_lock_t * lock, int64_t ms,
-                                    uintptr_t * data)
+static inline uintptr_t * sys_lock_add(sys_callback_f callback, uint32_t extra,
+                                       uint32_t size, uintptr_t * delay)
+{
+    sys_lock_item_t * item;
+    uintptr_t * data;
+
+    data = sys_calls_owned_add(&sys_async_owned_calls->tail, callback,
+                               sys_async_self->head.id, extra + SYS_LOCK_SIZE,
+                               size, 0);
+    item = (sys_lock_item_t *)data;
+    item->next = NULL;
+    item->delay = delay;
+
+    return data + SYS_LOCK_SIZE;
+}
+
+SYS_ASYNC_DECLARE(sys_lock_release, ((sys_lock_t *, lock)));
+
+static inline void sys_lock_acquire(sys_lock_t * lock, uintptr_t * data)
 {
     sys_lock_item_t * item, ** plast;
 
-    item = (sys_lock_item_t *)data;
-    item->next = NULL;
+    item = (sys_lock_item_t *)(data - SYS_LOCK_SIZE);
     plast = atomic_xchg(&lock->plast, &item->next, memory_order_seq_cst);
     *plast = item;
 
     if (plast == &lock->first)
     {
-        __sys_delay_execute(data, 0);
-    }
-    else
-    {
-        sys_delay_commit(data, ms);
+        if ((item->delay == NULL) || sys_delay_cancel(item->delay, false))
+        {
+            sys_calls_owned_execute((uintptr_t *)item);
+        }
+        else
+        {
+            sys_lock_release(lock);
+        }
     }
 }
-
-void sys_lock_release(sys_lock_t * lock);
 
 #endif /* __SYS_LOCK_H__ */
