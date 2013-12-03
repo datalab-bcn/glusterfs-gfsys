@@ -215,6 +215,8 @@ sys_calls_node_t * sys_calls_buffer_get(sys_calls_end_t * tail)
         tail->free_position = (pos + SYS_CALLS_INC) & tail->free_mask;
     }
 
+    logI("BUFFER: acquire %p", buffer);
+
     return buffer;
 }
 
@@ -222,6 +224,8 @@ void sys_calls_buffer_put(sys_calls_end_t * head, sys_calls_node_t * buffer)
 {
     sys_calls_node_t * tmp;
     uint32_t pos;
+
+    logI("BUFFER: release %p", buffer);
 
     pos = head->free_position;
     tmp = atomic_load(&head->free_buffers[pos], memory_order_acquire);
@@ -320,14 +324,15 @@ uintptr_t * sys_calls_prepare(sys_calls_end_t * tail, uint32_t extra,
 uintptr_t * sys_calls_add(sys_calls_end_t * tail, sys_callback_f callback,
                           uint32_t extra, uint32_t size, uint32_t refs)
 {
-    sys_calls_node_t * node;
+    sys_calls_node_t * node, * buffer;
     uintptr_t pos, length;
     uintptr_t * data;
 
     tail->processed++;
 
+    buffer = tail->buffer;
     pos = tail->position;
-    node = (sys_calls_node_t *)((uintptr_t *)tail->buffer + pos);
+    node = (sys_calls_node_t *)((uintptr_t *)buffer + pos);
 
     extra += SYS_CALLS_NODE_SIZE;
 
@@ -336,17 +341,15 @@ uintptr_t * sys_calls_add(sys_calls_end_t * tail, sys_callback_f callback,
 
     if (unlikely(tail->size < pos + SYS_CALLS_NODE_SIZE))
     {
-        sys_calls_node_t * tmp;
+        node->next = buffer;
+        buffer = (sys_calls_node_t *)sys_calls_buffer_get(tail);
+        tail->buffer = buffer;
 
-        tmp = (sys_calls_node_t *)sys_calls_buffer_get(tail);
-        tail->buffer = tmp;
-        node->next = tmp;
-
-        tmp->callback = SYS_CALLS_NULL;
+        buffer->callback = SYS_CALLS_NULL;
 
         atomic_store(&node->callback, SYS_CALLS_SWAP, memory_order_release);
 
-        node = tmp;
+        node = buffer;
         pos = length;
     }
 
@@ -368,7 +371,7 @@ uintptr_t * sys_calls_add(sys_calls_end_t * tail, sys_callback_f callback,
 
     return data + SYS_CALLS_NODE_SIZE;
 }
-
+/*
 uintptr_t * sys_calls_get(sys_calls_end_t * head)
 {
     sys_calls_node_t * node, * buffer;
@@ -417,7 +420,7 @@ uintptr_t * sys_calls_get(sys_calls_end_t * head)
 
     return NULL;
 }
-
+*/
 void sys_calls_release(sys_calls_end_t * head, uintptr_t * data)
 {
     sys_calls_node_t * node, * next, * buffer;
@@ -432,15 +435,27 @@ void sys_calls_release(sys_calls_end_t * head, uintptr_t * data)
 
     next = (sys_calls_node_t *)((uintptr_t *)node + node->size);
     callback = atomic_load(&next->callback, memory_order_acquire);
+    logI("SYS-CALLS: release %p -> %p (%p)", node, next, callback);
     while (callback == SYS_CALLS_EMPTY)
     {
         next = next->next;
         callback = atomic_load(&next->callback, memory_order_acquire);
     }
-    if (callback == SYS_CALLS_END)
+    node->next = next;
+    if (callback == SYS_CALLS_SWAP)
     {
-        buffer = next->next;
-        if ((buffer == node) || (buffer->next == node))
+        buffer = next = next->next;
+        callback = atomic_load(&next->callback, memory_order_acquire);
+        if (callback == SYS_CALLS_EMPTY)
+        {
+            do
+            {
+                next = next->next;
+                callback = atomic_load(&next->callback, memory_order_acquire);
+            } while ((node != next) && (callback == SYS_CALLS_EMPTY));
+            buffer->next = next;
+        }
+        if (node == next)
         {
             sys_calls_buffer_put(head, buffer);
 
@@ -448,7 +463,6 @@ void sys_calls_release(sys_calls_end_t * head, uintptr_t * data)
         }
     }
 
-    node->next = next;
     atomic_store(&node->callback, SYS_CALLS_EMPTY, memory_order_release);
 }
 
