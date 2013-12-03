@@ -72,6 +72,7 @@ SYS_ASYNC_TO_DEFINE(sys_io_callback, ((sys_io_item_t *, item)))
     *(uintptr_t **)item->cbk = (uintptr_t *)item + SYS_IO_SIZE;
     sys_calls_owned_execute(item->cbk);
     sys_calls_owned_release(&sys_async_owned_calls->head, item->cbk);
+    sys_io_release((uintptr_t *)item + SYS_IO_SIZE);
 }
 
 sys_io_item_t * sys_io_get(int32_t loops)

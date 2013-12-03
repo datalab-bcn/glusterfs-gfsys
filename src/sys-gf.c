@@ -259,7 +259,8 @@ SYS_GF_FOP_APPLY(, SYS_GF_DEFINE)
                                            _fop)); \
     } \
     SYS_IO_DEFINE(sys_gf_##_fop##_wind, __sys_gf_io, \
-                  (SYS_GF_IO_WIND_ARGS, SYS_GF_ARGS_##_fop)) \
+                  (SYS_GF_IO_WIND_ARGS, SYS_GF_ARGS_##_fop), \
+                  (SYS_GF_ARGS_CBK, SYS_GF_ARGS_##_fop##_cbk)) \
     { \
         logT("SYS-GF: submitting fop wind '" #_fop "'"); \
         *sys_io_data(__sys_gf_io) = (uintptr_t)cookie; \
@@ -268,7 +269,8 @@ SYS_GF_FOP_APPLY(, SYS_GF_DEFINE)
                              SYS_ARGS_NAMES((SYS_GF_ARGS_##_fop))); \
     } \
     SYS_IO_DEFINE(sys_gf_##_fop##_wind_tail, __sys_gf_io, \
-                  (SYS_GF_IO_WIND_TAIL_ARGS, SYS_GF_ARGS_##_fop)) \
+                  (SYS_GF_IO_WIND_TAIL_ARGS, SYS_GF_ARGS_##_fop), \
+                  (SYS_GF_ARGS_FOP)) \
     { \
         logT("SYS-GF: submitting fop wind_tail '" #_fop "'"); \
         sys_gf_##_fop##_wind_tail(frame, this, \
@@ -277,7 +279,8 @@ SYS_GF_FOP_APPLY(, SYS_GF_DEFINE)
                       this); \
     } \
     SYS_IO_DEFINE(sys_gf_##_fop##_unwind, __sys_gf_io, \
-                  (SYS_GF_IO_UNWIND_ARGS, SYS_GF_ARGS_##_fop##_cbk)) \
+                  (SYS_GF_IO_UNWIND_ARGS, SYS_GF_ARGS_##_fop##_cbk), \
+                  (SYS_GF_IO_UNWIND_ARGS)) \
     { \
         logT("SYS-GF: submitting fop unwind '" #_fop "'"); \
         sys_gf_##_fop##_unwind(frame, op_ret, op_errno, \
@@ -286,7 +289,8 @@ SYS_GF_FOP_APPLY(, SYS_GF_DEFINE)
                       op_ret, op_errno); \
     } \
     SYS_IO_DEFINE(sys_gf_##_fop##_unwind_error, __sys_gf_io, \
-                  (SYS_GF_IO_UNWIND_ERROR_ARGS, (dict_t *, xdata))) \
+                  (SYS_GF_IO_UNWIND_ERROR_ARGS, (dict_t *, xdata)), \
+                  (SYS_GF_IO_UNWIND_ERROR_ARGS)) \
     { \
         logT("SYS-GF: submitting fop unwind_error '" #_fop "'"); \
         sys_gf_##_fop##_unwind_error(frame, op_errno, xdata); \

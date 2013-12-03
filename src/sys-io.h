@@ -76,12 +76,11 @@
     _SYS_IO_DECLARE(_name, (SYS_IO_ARG(_io) SYS_MARG(SYS_EXPAND(_send))), \
                     _recv)
 
-#define _SYS_IO_DEFINE(_name, _send) \
+#define _SYS_IO_DEFINE(_name, _send, _recv) \
     void SYS_GLUE(free$, _name)(uintptr_t * args) \
     { \
-        logT("SYS-IO: freeing '" #_name "'"); \
-        SYS_ARGS_FREE(args, _recv); \
-        _sys_io_release(args); \
+        logI("ARGS: free %p", args); \
+        SYS_ARGS_FREE((SYS_ARGS_TYPE(recv_##_name) *)args, _recv); \
     } \
     void SYS_IO_PROXY(send_##_name)(uintptr_t * data) \
     { \
@@ -91,8 +90,8 @@
         send_##_name(SYS_ARGS_LOAD(args, _send)); \
     } \
     void send_##_name(SYS_ARGS_DECL(_send))
-#define SYS_IO_DEFINE(_name, _io, _send) \
-    _SYS_IO_DEFINE(_name, (SYS_IO_ARG(_io) SYS_MARG(SYS_EXPAND(_send))))
+#define SYS_IO_DEFINE(_name, _io, _send, _recv) \
+    _SYS_IO_DEFINE(_name, (SYS_IO_ARG(_io) SYS_MARG(SYS_EXPAND(_send))), _recv)
 
 #define SYS_IO_CBK(_name) SYS_GLUE(recv_, _name)
 
@@ -101,7 +100,7 @@
 
 #define SYS_IO_CREATE(_name, _io, _send, _recv) \
     SYS_IO_DECLARE(_name, _io, _send, _recv); \
-    SYS_IO_DEFINE(_name, _io, _send)
+    SYS_IO_DEFINE(_name, _io, _send, _recv)
 
 #define SYS_IO_CBK_CREATE(_name, _type, _recv) \
     SYS_IO_CBK_DEFINE(_name, _type, _recv)
