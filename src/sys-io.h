@@ -68,6 +68,10 @@
             SYS_ASYNC_TO(__sys_resume_queue, sys_io_callback, \
                          (__sys_resume_item)); \
         } \
+        else \
+        { \
+            _sys_io_release(__sys_resume_data); \
+        } \
         sys_io_complete(__sys_resume_data, __sys_resume_error); \
     } \
     void SYS_GLUE(free$, _name)(uintptr_t * args); \
