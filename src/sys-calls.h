@@ -112,7 +112,7 @@ typedef struct _sys_calls
         logT("SYS-CALLS: proxy to '" #_name "'"); \
         __unused SYS_ARGS_TYPE(_name) * args = (SYS_ARGS_TYPE(_name) *)data; \
         _name(SYS_ARGS_LOAD(args, _args)); \
-        logI("ARGS: free %p", args); \
+        logT("ARGS: free %p", args); \
         SYS_ARGS_FREE(args, _args); \
     } \
     void _name(SYS_ARGS_DECL(_args))
@@ -128,7 +128,7 @@ typedef struct _sys_calls
     ({ \
         uintptr_t * __sys_wrap_args; \
         __sys_wrap_args = SYS_GLUE(wrapper$, _name) SYS_ARGS_COMBINE(_extra, _args); \
-        logI("ARGS: call '" #_name "' %p", __sys_wrap_args); \
+        logT("ARGS: call '" #_name "' %p", __sys_wrap_args); \
         __sys_wrap_args; \
     })
 

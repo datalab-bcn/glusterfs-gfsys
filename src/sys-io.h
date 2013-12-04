@@ -70,6 +70,7 @@
         } \
         else \
         { \
+            logT("ARGS: free %p", __sys_resume_args); \
             _sys_io_release(__sys_resume_data); \
         } \
         sys_io_complete(__sys_resume_data, __sys_resume_error); \
@@ -83,7 +84,7 @@
 #define _SYS_IO_DEFINE(_name, _send, _recv) \
     void SYS_GLUE(free$, _name)(uintptr_t * args) \
     { \
-        logI("ARGS: free %p", args); \
+        logT("ARGS: free %p", args); \
         SYS_ARGS_FREE((SYS_ARGS_TYPE(recv_##_name) *)args, _recv); \
     } \
     void SYS_IO_PROXY(send_##_name)(uintptr_t * data) \

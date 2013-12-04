@@ -215,7 +215,7 @@ sys_calls_node_t * sys_calls_buffer_get(sys_calls_end_t * tail)
         tail->free_position = (pos + SYS_CALLS_INC) & tail->free_mask;
     }
 
-    logI("BUFFER: acquire %p", buffer);
+    logT("BUFFER: acquire %p", buffer);
 
     return buffer;
 }
@@ -225,7 +225,7 @@ void sys_calls_buffer_put(sys_calls_end_t * head, sys_calls_node_t * buffer)
     sys_calls_node_t * tmp;
     uint32_t pos;
 
-    logI("BUFFER: release %p", buffer);
+    logT("BUFFER: release %p", buffer);
 
     pos = head->free_position;
     tmp = atomic_load(&head->free_buffers[pos], memory_order_acquire);
@@ -435,7 +435,7 @@ void sys_calls_release(sys_calls_end_t * head, uintptr_t * data)
 
     next = (sys_calls_node_t *)((uintptr_t *)node + node->size);
     callback = atomic_load(&next->callback, memory_order_acquire);
-    logI("SYS-CALLS: release %p -> %p (%p)", node, next, callback);
+    logT("SYS-CALLS: release %p -> %p (%p)", node, next, callback);
     while (callback == SYS_CALLS_EMPTY)
     {
         next = next->next;
