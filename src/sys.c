@@ -20,38 +20,53 @@
 
 #include "gfsys.h"
 
+static pthread_mutex_t sys_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+static bool sys_initialized = false;
+static err_t sys_error = 0;
+
 err_t gfsys_initialize(gfsys_config_t * config, bool init_gf)
 {
-    if (init_gf)
+    pthread_mutex_lock(&sys_mutex);
+
+    if (!sys_initialized)
     {
+        if (init_gf)
+        {
+            SYS_CALL(
+                sys_gf_initialize, (config ? &config->gf : NULL),
+                E(),
+                GOTO(done, &sys_error)
+            );
+        }
+
         SYS_CALL(
-            sys_gf_initialize, (config ? &config->gf : NULL),
+            sys_thread_initialize, (),
             E(),
-            RETERR()
+            GOTO(done, &sys_error)
+        );
+        SYS_CALL(
+            sys_tsc_initialize, (config ? &config->tsc : NULL),
+            E(),
+            GOTO(done, &sys_error)
+        );
+        SYS_CALL(
+            sys_async_initialize, (config ? &config->async : NULL),
+            E(),
+            GOTO(done, &sys_error)
+        );
+        SYS_CALL(
+            sys_io_initialize, (config ? &config->io : NULL),
+            E(),
+            GOTO(done, &sys_error)
         );
     }
 
-    SYS_CALL(
-        sys_thread_initialize, (),
-        E(),
-        RETERR()
-    );
-    SYS_CALL(
-        sys_tsc_initialize, (config ? &config->tsc : NULL),
-        E(),
-        RETERR()
-    );
-    SYS_CALL(
-        sys_async_initialize, (config ? &config->async : NULL),
-        E(),
-        RETERR()
-    );
-    SYS_CALL(
-        sys_io_initialize, (config ? &config->io : NULL),
-        E(),
-        RETERR()
-    );
+done:
+    sys_initialized = true;
 
-    return 0;
+    pthread_mutex_unlock(&sys_mutex);
+
+    return sys_error;
 }
 
