@@ -10,6 +10,7 @@ libgfsys_la_SOURCES += sys-ratelimit.c
 libgfsys_la_SOURCES += sys-time.c
 libgfsys_la_SOURCES += sys-mutex.c
 libgfsys_la_SOURCES += sys-cond.c
+libgfsys_la_SOURCES += sys-init.c
 libgfsys_la_SOURCES += sys-thread.c
 libgfsys_la_SOURCES += sys-tsc.c
 libgfsys_la_SOURCES += sys-buffer.c

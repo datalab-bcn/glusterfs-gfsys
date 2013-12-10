@@ -45,6 +45,7 @@
 #include "sys-tsc.h"
 #include "sys-mutex.h"
 #include "sys-cond.h"
+#include "sys-init.h"
 #include "sys-buffer.h"
 #include "sys-heap.h"
 #include "sys-trie.h"
