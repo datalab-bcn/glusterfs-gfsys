@@ -20,5 +20,5 @@
 
 #include "gfsys.h"
 
-extern sys_mutex_t sys_init_mutex;
+sys_mutex_t sys_init_mutex;
 
