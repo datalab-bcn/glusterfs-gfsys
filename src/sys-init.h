@@ -23,35 +23,52 @@
 
 extern sys_mutex_t sys_init_mutex;
 
+struct _sys_init;
+typedef struct _sys_init sys_init_t;
+
+struct _sys_init
+{
+    uint32_t refs;
+};
+
+#define SYS_INIT_INITIALIZER { .refs = 0 }
+
 #define __SYS_INIT(_err, _init, _func, _args, _log, _acts...) \
     ({ \
-        static bool _init = false; \
         err_t _err = EALREADY; \
-        if (!_init) \
+        sys_mutex_lock(&sys_init_mutex); \
+        if ((_init)->refs == 0) \
         { \
-            sys_mutex_lock(&sys_init_mutex); \
-            if (!_init) \
-            { \
-                _err = _func _args; \
-                _init = (_err == 0); \
-            } \
-            sys_mutex_unlock(&sys_init_mutex); \
-            if (unlikely(!_init)) \
-            { \
-                sys_log(_log, #_func "() failed. Returned error %d", _err); \
-                SYS_ACTIONS_DO(_err, _acts); \
-            } \
+            _err = _func _args; \
+            (_init)->refs = (_err == 0); \
         } \
         else \
         { \
             logT(#_func "() already succeeded"); \
+        } \
+        sys_mutex_unlock(&sys_init_mutex); \
+        if (unlikely((_init)->refs == 0)) \
+        { \
+            sys_log(_log, #_func "() failed. Returned error %d", _err); \
+            SYS_ACTIONS_DO(_err, _acts); \
         } \
         _err; \
     })
 
 #define _SYS_INIT(_args...) __SYS_INIT(_args)
 
-#define SYS_INIT(_func, _args, _log, _acts...) \
-    _SYS_INIT(SYS_TMP(2), _func, _args, _log, ## _acts)
+#define SYS_INIT(_init, _func, _args, _log, _acts...) \
+    _SYS_INIT(SYS_TMP(1), _init, _func, _args, _log, ## _acts)
+
+#define SYS_TERM(_init, _func, _args) \
+    do \
+    { \
+        sys_mutex_lock(&sys_init_mutex); \
+        if (--(_init)->refs == 0) \
+        { \
+            _func _args; \
+        } \
+        sys_mutex_unlock(&sys_init_mutex); \
+    } while (0)
 
 #endif /* __SYS_INIT_H__ */

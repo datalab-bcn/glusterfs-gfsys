@@ -31,5 +31,6 @@ typedef struct _gfsys_config
 } gfsys_config_t;
 
 err_t gfsys_initialize(gfsys_config_t * config, bool init_gf);
+void gfsys_terminate(void);
 
 #endif /* __SYS_H__ */

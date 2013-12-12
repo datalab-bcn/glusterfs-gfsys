@@ -20,6 +20,8 @@
 
 #include "gfsys.h"
 
+static sys_init_t gfsys_initialization = SYS_INIT_INITIALIZER;
+
 err_t __gfsys_initialize(gfsys_config_t * config, bool init_gf)
 {
     if (init_gf)
@@ -55,14 +57,28 @@ err_t __gfsys_initialize(gfsys_config_t * config, bool init_gf)
     return 0;
 }
 
+void __gfsys_terminate(void)
+{
+    // TODO: Do proper termination
+}
+
 err_t gfsys_initialize(gfsys_config_t * config, bool init_gf)
 {
     SYS_INIT(
+        &gfsys_initialization,
         __gfsys_initialize, (config, init_gf),
         E(),
         RETERR()
     );
 
     return 0;
+}
+
+void gfsys_terminate(void)
+{
+    SYS_TERM(
+        &gfsys_initialization,
+        __gfsys_terminate, ()
+    );
 }
 
