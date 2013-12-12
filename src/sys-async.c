@@ -410,45 +410,71 @@ SYS_ASYNC_TO_DEFINE(__sys_delay_execute, ((uintptr_t *, data),
     sys_async_stats.timers++;
 }
 
-SYS_ASYNC_TO_CREATE(sys_rcu_quiesce, ((struct list_head *, items),
-                                      (sys_async_queue_t *, queue)))
+SYS_ASYNC_TO_DECLARE(sys_rcu_quiesce, ((sys_async_queue_t *, queue),
+                                       (struct list_head *, items)))
+
+void __sys_rcu_process(struct list_head * items)
 {
-    struct list_head * next;
+    struct list_head * first;
     sys_rcu_t * rcu;
 
+    first = items;
+    do
+    {
+        rcu = list_entry(items, sys_rcu_t, list);
+        items = items->next;
+
+        sys_calls_owned_execute((uintptr_t *)rcu);
+        sys_calls_owned_release(&sys_async_owned_calls->head,
+                                (uintptr_t *)rcu);
+    } while (items != first);
+}
+
+void __sys_rcu_quiesce(sys_async_queue_t * queue, struct list_head * items)
+{
+    sys_async_queue_t * next;
+
+    next = sys_async_next_send(sys_async_self);
+    while (next != queue)
+    {
+        if ((next->tail.state & SYS_ASYNC_FLAG_ACTIVE) != 0)
+        {
+            SYS_ASYNC_TO(next, sys_rcu_quiesce, (queue, items));
+            return;
+        }
+        next = sys_async_next_send(next);
+    }
+
+    __sys_rcu_process(items);
+}
+
+SYS_ASYNC_TO_DEFINE(sys_rcu_quiesce, ((sys_async_queue_t *, queue),
+                                      (struct list_head *, items)))
+{
     if (queue == sys_async_self)
     {
-        next = items->next;
-        while (items != next)
-        {
-            rcu = list_entry(items, sys_rcu_t, list);
-            list_del_init(items);
-
-            sys_calls_owned_execute((uintptr_t *)rcu);
-            sys_calls_owned_release(&sys_async_owned_calls->head,
-                                    (uintptr_t *)rcu);
-
-            items = next;
-            next = items->next;
-        }
+        __sys_rcu_process(items);
     }
     else
     {
-        SYS_ASYNC_TO(sys_async_next_send(sys_async_self),
-                     sys_rcu_quiesce, (items, queue));
+        __sys_rcu_quiesce(queue, items);
     }
 }
 
-SYS_DELAY_DEFINE(sys_rcu_process, ((void, delay, CALLS)))
+SYS_DELAY_DEFINE(sys_rcu_process, ())
 {
     struct list_head * items;
+
+    SYS_ASSERT(
+        !list_empty(&sys_async_rcu.list),
+        "RCU list is empty"
+    );
 
     items = sys_async_rcu.list.next;
     list_del_init(&sys_async_rcu.list);
     sys_async_rcu.count = 0;
 
-    SYS_ASYNC_TO(sys_async_next_send(sys_async_self),
-                 sys_rcu_quiesce, (items, sys_async_self));
+    __sys_rcu_quiesce(sys_async_self, items);
 }
 
 uint64_t sys_async_process(int32_t loops)
