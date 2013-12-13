@@ -411,7 +411,7 @@ static inline uintptr_t * sys_rcu_add(uintptr_t * data)
         sys_async_rcu.timer = SYS_DELAY(sys_async_config.rcu_grace_period,
                                         sys_rcu_process, (), 1);
     }
-    if (sys_async_rcu.count >= sys_async_config.rcu_threshold)
+    if (sys_async_rcu.count == sys_async_config.rcu_threshold)
     {
         sys_delay_execute(sys_async_rcu.timer, 0);
     }
