@@ -398,7 +398,7 @@ static inline bool sys_delay_execute(uintptr_t * data, err_t error)
     return true;
 }
 
-SYS_DELAY_DECLARE(sys_rcu_process, ());
+SYS_DELAY_DECLARE(sys_rcu_process, ((void, data, CALLS)));
 
 static inline uintptr_t * sys_rcu_add(uintptr_t * data)
 {
@@ -409,7 +409,7 @@ static inline uintptr_t * sys_rcu_add(uintptr_t * data)
     if (sys_async_rcu.count++ == 0)
     {
         sys_async_rcu.timer = SYS_DELAY(sys_async_config.rcu_grace_period,
-                                        sys_rcu_process, (), 1);
+                                        sys_rcu_process, (NULL), 1);
     }
     if (sys_async_rcu.count == sys_async_config.rcu_threshold)
     {

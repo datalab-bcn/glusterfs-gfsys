@@ -461,7 +461,7 @@ SYS_ASYNC_TO_DEFINE(sys_rcu_quiesce, ((sys_async_queue_t *, queue),
     }
 }
 
-SYS_DELAY_DEFINE(sys_rcu_process, ())
+SYS_DELAY_DEFINE(sys_rcu_process, ((void, data, CALLS)))
 {
     struct list_head * items;
 
@@ -469,6 +469,11 @@ SYS_DELAY_DEFINE(sys_rcu_process, ())
         !list_empty(&sys_async_rcu.list),
         "RCU list is empty"
     );
+
+    if (sys_thread_get_error() == ETIMEDOUT)
+    {
+        sys_delay_release(data);
+    }
 
     items = sys_async_rcu.list.next;
     list_del_init(&sys_async_rcu.list);
