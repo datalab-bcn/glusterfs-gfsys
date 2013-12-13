@@ -452,7 +452,7 @@ void sys_calls_release(sys_calls_end_t * head, uintptr_t * data)
             {
                 next = next->next;
                 callback = atomic_load(&next->callback, memory_order_acquire);
-            } while ((node != next) && (callback == SYS_CALLS_EMPTY));
+            } while (callback == SYS_CALLS_EMPTY);
             buffer->next = next;
         }
         if (node == next)
