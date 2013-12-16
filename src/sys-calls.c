@@ -149,9 +149,9 @@ err_t sys_calls_buffer_initialize(sys_calls_config_t * config,
     head->buffer = tail->buffer = buffer;
     head->free = (uintptr_t *)buffer + local.size;
     tail->free = (uintptr_t *)head;
-    head->free_position = 0;
-    tail->free_position = local.backlog_preallocate;
     head->free_mask = tail->free_mask = local.backlog_entries - 1;
+    head->free_position = local.backlog_preallocate & head->free_mask;
+    tail->free_position = 0;
     head->free_buffers = tail->free_buffers = list;
     head->allocations = head->processed = head->callbacks = 0;
     tail->allocations = tail->processed = tail->callbacks = 0;
