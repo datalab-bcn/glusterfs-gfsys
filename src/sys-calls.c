@@ -477,34 +477,38 @@ bool sys_calls_process(sys_calls_end_t * head)
     node = (sys_calls_node_t *)((uintptr_t *)buffer + pos);
 
     callback = atomic_load(&node->callback, memory_order_acquire);
-    if (callback != SYS_CALLS_NULL)
+    if (unlikely(callback == SYS_CALLS_NULL))
     {
-        if (unlikely(callback == SYS_CALLS_SWAP))
-        {
-            node = node->next;
-            sys_calls_buffer_put(head, buffer);
-            head->buffer = node;
-
-            callback = node->callback;
-            pos = 0;
-        }
-
-        head->position = pos + node->size;
-
-        if (callback != SYS_CALLS_NULL)
-        {
-            logT("SYS-CALLS: process %p", node);
-            THIS = node->xl;
-            callback((uintptr_t *)node + node->extra);
-
-            head->callbacks++;
-            head->processed++;
-
-            return true;
-        }
+        return false;
     }
 
-    return false;
+    if (unlikely(callback == SYS_CALLS_SWAP))
+    {
+        node = node->next;
+        sys_calls_buffer_put(head, buffer);
+        head->buffer = node;
+
+        callback = node->callback;
+        if (unlikely(callback == SYS_CALLS_NULL))
+        {
+            head->position = 0;
+
+            return false;
+        }
+
+        pos = 0;
+    }
+
+    head->position = pos + node->size;
+
+    logT("SYS-CALLS: process %p", node);
+    THIS = node->xl;
+    callback((uintptr_t *)node + node->extra);
+
+    head->callbacks++;
+    head->processed++;
+
+    return true;
 }
 /*
 void __sys_calls_cancellable_release(sys_calls_end_t * head,
