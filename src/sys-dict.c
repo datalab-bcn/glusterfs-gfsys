@@ -37,7 +37,7 @@ err_t sys_dict_cow(dict_t ** dst)
     else if (tmp->refcount > 1)
     {
         SYS_PTR(
-            &tmp, dict_copy, (tmp, NULL),
+            &tmp, dict_copy_with_ref, (tmp, NULL),
             ENOMEM,
             E(),
             RETERR()
