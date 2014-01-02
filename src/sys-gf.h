@@ -397,6 +397,25 @@ static inline void sys_gf_unwind_error(call_frame_t * frame, int32_t op_errno,
     args->ops->unwind_error(frame, op_errno, xdata, cbk, to, data);
 }
 
+SYS_ASYNC_TO_DECLARE(__sys_gf_args_release, ((uintptr_t *, data)));
+
+static inline void sys_gf_args_release(uintptr_t * data)
+{
+    uintptr_t owner, * gf;
+
+    gf = data - SYS_GF_SIZE;
+    owner = sys_calls_owned_owner(gf);
+    if (owner == sys_async_self->head.id)
+    {
+        sys_calls_owned_release(&sys_async_timer_calls->head, gf);
+    }
+    else
+    {
+        SYS_ASYNC_TO(sys_async_queue_get(owner),
+                     __sys_gf_args_release, (data));
+    }
+}
+
 SYS_GF_FOP_APPLY(SEMIC, SYS_GF_IO_DECLARE);
 SYS_GF_FOP_APPLY(SEMIC, SYS_GF_DECLARE);
 
