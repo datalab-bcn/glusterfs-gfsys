@@ -416,6 +416,12 @@ static inline void sys_gf_args_release(uintptr_t * data)
     }
 }
 
+static inline void sys_gf_args_free(uintptr_t * data)
+{
+    sys_calls_owned_execute(data - SYS_GF_SIZE);
+    sys_gf_args_release(data);
+}
+
 SYS_GF_FOP_APPLY(SEMIC, SYS_GF_IO_DECLARE);
 SYS_GF_FOP_APPLY(SEMIC, SYS_GF_DECLARE);
 

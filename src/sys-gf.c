@@ -163,28 +163,24 @@
     { \
         logT("SYS-GF: fop free '" #_fop "'"); \
         SYS_ARGS_FREE((SYS_GF_FOP_TYPE(_fop) *)data, (SYS_GF_ARGS_##_fop)); \
-        sys_gf_args_release(data); \
     } \
     void sys_gf_cbk_##_fop##_free(uintptr_t * data) \
     { \
         logT("SYS-GF: cbk free '" #_fop "'"); \
         SYS_ARGS_FREE((SYS_GF_CBK_TYPE(_fop) *)data, \
                       (SYS_GF_ARGS_##_fop##_cbk)); \
-        sys_gf_args_release(data); \
     } \
     void sys_gf_fop_call_##_fop##_free(uintptr_t * data) \
     { \
         logT("SYS-GF: fop call free '" #_fop "'"); \
         SYS_ARGS_FREE((SYS_GF_FOP_CALL_TYPE(_fop) *)data, \
                       (SYS_GF_ARGS_FOP, SYS_GF_ARGS_##_fop)); \
-        sys_gf_args_release(data); \
     } \
     void sys_gf_cbk_call_##_fop##_free(uintptr_t * data) \
     { \
         logT("SYS-GF: cbk call free '" #_fop "'"); \
         SYS_ARGS_FREE((SYS_GF_CBK_CALL_TYPE(_fop) *)data, \
                       (SYS_GF_ARGS_CBK, SYS_GF_ARGS_##_fop##_cbk)); \
-        sys_gf_args_release(data); \
     }
 
 SYS_ASYNC_TO_DEFINE(__sys_gf_args_release, ((uintptr_t *, data)))
