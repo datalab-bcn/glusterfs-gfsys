@@ -97,7 +97,7 @@ static inline uuid_t * __sys_buf_ptr_uuid(void ** ptr)
 
 static inline void __sys_buf_get_uuid(void ** ptr, uuid_t uuid)
 {
-    __sys_buf_get_raw(ptr, uuid, sizeof(uuid));
+    __sys_buf_get_raw(ptr, uuid, sizeof(uuid_t));
 }
 
 static inline void * __sys_buf_ptr_block(void ** ptr, uint32_t * length)
@@ -179,7 +179,7 @@ static inline void __sys_buf_set_raw(void ** ptr, void * raw, size_t length)
 
 static inline void __sys_buf_set_uuid(void ** ptr, uuid_t uuid)
 {
-    __sys_buf_set_raw(ptr, uuid, sizeof(uuid));
+    __sys_buf_set_raw(ptr, uuid, sizeof(uuid_t));
 }
 
 static inline void __sys_buf_set_block(void ** ptr, void * block,
@@ -287,13 +287,13 @@ static inline err_t sys_buf_get_raw(void ** ptr, size_t * size,
 static inline err_t sys_buf_ptr_uuid(void ** ptr, size_t * size,
                                      uuid_t ** uuid)
 {
-    return sys_buf_ptr_raw(ptr, size, (void **)uuid, sizeof(uuid));
+    return sys_buf_ptr_raw(ptr, size, (void **)uuid, sizeof(uuid_t));
 }
 
 static inline err_t sys_buf_get_uuid(void ** ptr, size_t * size,
                                      uuid_t uuid)
 {
-    return sys_buf_get_raw(ptr, size, uuid, sizeof(uuid));
+    return sys_buf_get_raw(ptr, size, uuid, sizeof(uuid_t));
 }
 
 static inline err_t sys_buf_ptr_block(void ** ptr, size_t * size,
@@ -412,7 +412,7 @@ static inline err_t sys_buf_set_raw(void ** ptr, size_t * size,
 static inline err_t sys_buf_set_uuid(void ** ptr, size_t * size,
                                      uuid_t uuid)
 {
-    return sys_buf_set_raw(ptr, size, uuid, sizeof(uuid));
+    return sys_buf_set_raw(ptr, size, uuid, sizeof(uuid_t));
 }
 
 static inline err_t sys_buf_set_block(void ** ptr, size_t * size,
