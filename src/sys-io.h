@@ -26,6 +26,9 @@
 
 #define SYS_IO_PROXY(_name) SYS_GLUE(ioproxy$, _name)
 
+#define SYS_IO_TYPE(_name) SYS_ARGS_TYPE(send_##_name)
+#define SYS_IO_CBK_TYPE(_name) SYS_ARGS_TYPE(recv_##_name)
+
 #define _SYS_IO_DECLARE(_name, _send, _recv) \
     SYS_ARGS_TYPE_DEFINE(send_##_name, _send); \
     SYS_ARGS_TYPE_DEFINE(recv_##_name, _recv); \

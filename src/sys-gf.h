@@ -214,6 +214,23 @@
     (call_frame_t *, frame),  \
     (int32_t,        op_errno)
 
+#define SYS_GF_WIND_TYPE(_fop) \
+            SYS_IO_TYPE(sys_gf_##_fop##_wind)
+#define SYS_GF_WIND_CBK_TYPE(_fop) \
+            SYS_IO_CBK_TYPE(sys_gf_##_fop##_wind)
+#define SYS_GF_WIND_TAIL_TYPE(_fop) \
+            SYS_IO_TYPE(sys_gf_##_fop##_wind_tail)
+#define SYS_GF_WIND_TAIL_CBK_TYPE(_fop) \
+            SYS_IO_CBK_TYPE(sys_gf_##_fop##_wind_tail)
+#define SYS_GF_UNWIND_TYPE(_fop) \
+            SYS_IO_TYPE(sys_gf_##_fop##_unwind)
+#define SYS_GF_UNWIND_CBK_TYPE(_fop) \
+            SYS_IO_CBK_TYPE(sys_gf_##_fop##_unwind)
+#define SYS_GF_UNWIND_ERROR_TYPE(_fop) \
+            SYS_IO_TYPE(sys_gf_##_fop##_unwind_error)
+#define SYS_GF_UNWIND_ERROR_CBK_TYPE(_fop) \
+            SYS_IO_CBK_TYPE(sys_gf_##_fop##_unwind_error)
+
 #define SYS_GF_IO_DECLARE(_fop) \
     SYS_IO_DECLARE(sys_gf_##_fop##_wind, __sys_gf_io, \
                    (SYS_GF_IO_WIND_ARGS, SYS_GF_ARGS_##_fop), \
