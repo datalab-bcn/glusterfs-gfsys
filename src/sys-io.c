@@ -160,7 +160,7 @@ void __sys_io_core(void)
         item = sys_io_sleep(sys_io_config.worker_timeout);
         if (item == NULL)
         {
-            logD("I/O Worker %u: No work to do", sys_io_id);
+            logT("I/O Worker %u: No work to do", sys_io_id);
 
             if (sys_io_id == sys_io_count)
             {

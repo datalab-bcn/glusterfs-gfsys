@@ -695,7 +695,7 @@ uint64_t __sys_async_core(void)
     processed = sys_async_sleep(sys_async_config.worker_timeout);
     if (processed == 0)
     {
-        logD("Worker %u: No work to do", sys_async_self->head.id);
+        logT("Worker %u: No work to do", sys_async_self->head.id);
         if ((sys_async_self->tail.state & SYS_ASYNC_FLAG_LAST) != 0)
         {
             processed = sys_async_stop();
