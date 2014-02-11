@@ -236,13 +236,13 @@ SYS_GF_FOP_APPLY(, SYS_GF_DEFINE)
                             SYS_ARGS_NAMES((SYS_GF_ARGS_##_fop##_cbk))); \
     } \
     void sys_gf_##_fop##_unwind_error(call_frame_t * frame, int32_t op_errno, \
-                                      dict_t * xdata) \
+                                      dict_t * err_xdata) \
     { \
+        SYS_ARGS_INIT((SYS_GF_ARGS_##_fop##_cbk)); \
+        xdata = err_xdata; \
         logT("SYS-GF: unwind_error '" #_fop "'"); \
         STACK_UNWIND_STRICT(_fop, frame, -1, op_errno, \
-                            SYS_ARGS_APPLY(SYS_GF_NULL, \
-                                           (SYS_GF_ARGS_##_fop##_cbk), \
-                                           _fop)); \
+                            SYS_ARGS_NAMES((SYS_GF_ARGS_##_fop##_cbk))); \
     } \
     SYS_IO_DEFINE(sys_gf_##_fop##_wind, __sys_gf_io, \
                   (SYS_GF_IO_WIND_ARGS, SYS_GF_ARGS_##_fop), \
@@ -283,17 +283,6 @@ SYS_GF_FOP_APPLY(, SYS_GF_DEFINE)
         SYS_IO_RESUME(sys_gf_##_fop##_unwind_error, __sys_gf_io, 0, frame, \
                       op_errno); \
     }
-
-#define SYS_GF_NULL(_arg, _fop, _more...) \
-    ({ \
-        typeof(ARG_TYPE(_arg)) __data = 0; \
-        if ((void *)&((SYS_GF_CBK_TYPE(_fop) *)0)->SYS_ARG_NAME(_arg) == \
-            (void *)&((SYS_GF_CBK_TYPE(_fop) *)0)->xdata) \
-        { \
-            __data = (ARG_TYPE(_arg))(uintptr_t)xdata; \
-        } \
-        __data; \
-    })
 
 static sys_gf_config_t sys_gf_config =
 {

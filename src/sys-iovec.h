@@ -21,20 +21,38 @@
 #ifndef __SYS_IOVEC_H__
 #define __SYS_IOVEC_H__
 
-static inline void sys_iovec_acquire(struct iovec * dst, struct iovec * src)
+typedef struct _sys_iovec
+{
+    int32_t        count;
+    struct iovec * iovec;
+} sys_iovec_t;
+
+static inline void sys_iovec_acquire(sys_iovec_t * dst, struct iovec * src, int32_t count)
 {
     if (src != NULL)
     {
-        *dst = *src;
+        dst->count = count;
+        SYS_ALLOC(
+            &dst->iovec, count * sizeof(struct iovec), sys_mt_iovec,
+            E(),
+            NO_FAIL()
+        );
+
+        memcpy(dst->iovec, src, count * sizeof(struct iovec));
     }
     else
     {
-        memset(dst, 0, sizeof(*dst));
+        dst->count = 0;
+        dst->iovec = NULL;
     }
 }
 
-static inline void sys_iovec_release(struct iovec * src)
+static inline void sys_iovec_release(sys_iovec_t * src)
 {
+    if ((src != NULL) && (src->iovec != NULL))
+    {
+        SYS_FREE(src->iovec);
+    }
 }
 
 #endif /* __SYS_IOVEC_H__ */

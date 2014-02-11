@@ -414,9 +414,8 @@
 #define SYS_GF_ARGS_writev                                                 \
         (fd_t *,             fd,               COPY, sys_fd_acquire,       \
                                                      sys_fd_release),      \
-        (struct iovec,       vector,           PTR,  sys_iovec_acquire,    \
+        (sys_iovec_t,        vector,           IOV,  sys_iovec_acquire,    \
                                                      sys_iovec_release),   \
-        (int32_t,            count),                                       \
         (off_t,              offset),                                      \
         (uint32_t,           flags),                                       \
         (struct iobref *,    iobref,           COPY, sys_iobref_acquire,   \
@@ -616,9 +615,8 @@
                                                      sys_dict_release)
 
 #define SYS_GF_ARGS_readv_cbk                                              \
-        (struct iovec,       vector,           PTR,  sys_iovec_acquire,    \
+        (sys_iovec_t,        vector,           IOV,  sys_iovec_acquire,    \
                                                      sys_iovec_release),   \
-        (int32_t,            count),                                       \
         (struct iatt,        stbuf,            PTR,  sys_iatt_acquire,     \
                                                      sys_iatt_release),    \
         (struct iobref *,    iobref,           COPY, sys_iobref_acquire,   \

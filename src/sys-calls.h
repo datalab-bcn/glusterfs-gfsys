@@ -89,6 +89,8 @@ typedef struct _sys_calls
                               SYS_ARG_NAME(_arg, ## _more))
 #define SYS_ARG_CALLS_FREE(_arg, _src, _more...) \
     SYS_ARG_FREE(_arg, _src, ## _more)
+#define SYS_ARG_CALLS_INIT(_arg, _more...) \
+    SYS_ARG_CALLS_FIELD(_arg, ## _more) = NULL
 
 #define SYS_CALLS_ADJUST_SIZE(_size) \
     (((_size) + sizeof(uintptr_t) - 1) / sizeof(uintptr_t))

@@ -323,6 +323,7 @@ enum sys_mem_types
     sys_mt_sys_async_queue_t,
     sys_mt_sys_heap_t,
     sys_mt_sys_heap_item_t,
+    sys_mt_iovec,
     sys_mt_end
 };
 

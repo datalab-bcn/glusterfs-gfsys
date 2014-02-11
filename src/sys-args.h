@@ -25,53 +25,52 @@
 #define SYS_ARGS_MACRO(_macro, _idx, _extra, _arg) \
     _SYS_ARGS_MACRO(_macro, (_idx SYS_MARG(SYS_EXPAND(_arg))) \
                             SYS_MARG(SYS_EXPAND(_extra)))
-
 #define SYS_ARGS_APPLY_1(_macro, _extra, _arg, _args...) \
-    SYS_SELECT(SYS_ARGS_MACRO(_macro, 15, _extra, _arg), , _arg)
+    SYS_EXPAND(SYS_SELECT((SYS_ARGS_MACRO(_macro, 15, _extra, _arg)), (), _arg))
 #define SYS_ARGS_APPLY_2(_macro, _extra, _arg, _args...) \
-    SYS_SELECT(SYS_ARGS_MACRO(_macro, 14, _extra, _arg), , _arg) \
+    SYS_EXPAND(SYS_SELECT((SYS_ARGS_MACRO(_macro, 14, _extra, _arg)), (), _arg)) \
     SYS_MARG(SYS_ARGS_APPLY_1(_macro, _extra, _args))
 #define SYS_ARGS_APPLY_3(_macro, _extra, _arg, _args...) \
-    SYS_SELECT(SYS_ARGS_MACRO(_macro, 13, _extra, _arg), , _arg) \
+    SYS_EXPAND(SYS_SELECT((SYS_ARGS_MACRO(_macro, 13, _extra, _arg)), (), _arg)) \
     SYS_MARG(SYS_ARGS_APPLY_2(_macro, _extra, _args))
 #define SYS_ARGS_APPLY_4(_macro, _extra, _arg, _args...) \
-    SYS_SELECT(SYS_ARGS_MACRO(_macro, 12, _extra, _arg), , _arg) \
+    SYS_EXPAND(SYS_SELECT((SYS_ARGS_MACRO(_macro, 12, _extra, _arg)), (), _arg)) \
     SYS_MARG(SYS_ARGS_APPLY_3(_macro, _extra, _args))
 #define SYS_ARGS_APPLY_5(_macro, _extra, _arg, _args...) \
-    SYS_SELECT(SYS_ARGS_MACRO(_macro, 11, _extra, _arg), , _arg) \
+    SYS_EXPAND(SYS_SELECT((SYS_ARGS_MACRO(_macro, 11, _extra, _arg)), (), _arg)) \
     SYS_MARG(SYS_ARGS_APPLY_4(_macro, _extra, _args))
 #define SYS_ARGS_APPLY_6(_macro, _extra, _arg, _args...) \
-    SYS_SELECT(SYS_ARGS_MACRO(_macro, 10, _extra, _arg), , _arg) \
+    SYS_EXPAND(SYS_SELECT((SYS_ARGS_MACRO(_macro, 10, _extra, _arg)), (), _arg)) \
     SYS_MARG(SYS_ARGS_APPLY_5(_macro, _extra, _args))
 #define SYS_ARGS_APPLY_7(_macro, _extra, _arg, _args...) \
-    SYS_SELECT(SYS_ARGS_MACRO(_macro, 9, _extra, _arg), , _arg) \
+    SYS_EXPAND(SYS_SELECT((SYS_ARGS_MACRO(_macro, 9, _extra, _arg)), (), _arg)) \
     SYS_MARG(SYS_ARGS_APPLY_6(_macro, _extra, _args))
 #define SYS_ARGS_APPLY_8(_macro, _extra, _arg, _args...) \
-    SYS_SELECT(SYS_ARGS_MACRO(_macro, 8, _extra, _arg), , _arg) \
+    SYS_EXPAND(SYS_SELECT((SYS_ARGS_MACRO(_macro, 8, _extra, _arg)), (), _arg)) \
     SYS_MARG(SYS_ARGS_APPLY_7(_macro, _extra, _args))
 #define SYS_ARGS_APPLY_9(_macro, _extra, _arg, _args...) \
-    SYS_SELECT(SYS_ARGS_MACRO(_macro, 7, _extra, _arg), , _arg) \
+    SYS_EXPAND(SYS_SELECT((SYS_ARGS_MACRO(_macro, 7, _extra, _arg)), (), _arg)) \
     SYS_MARG(SYS_ARGS_APPLY_8(_macro, _extra, _args))
 #define SYS_ARGS_APPLY_10(_macro, _extra, _arg, _args...) \
-    SYS_SELECT(SYS_ARGS_MACRO(_macro, 6, _extra, _arg), , _arg) \
+    SYS_EXPAND(SYS_SELECT((SYS_ARGS_MACRO(_macro, 6, _extra, _arg)), (), _arg)) \
     SYS_MARG(SYS_ARGS_APPLY_9(_macro, _extra, _args))
 #define SYS_ARGS_APPLY_11(_macro, _extra, _arg, _args...) \
-    SYS_SELECT(SYS_ARGS_MACRO(_macro, 5, _extra, _arg), , _arg) \
+    SYS_EXPAND(SYS_SELECT((SYS_ARGS_MACRO(_macro, 5, _extra, _arg)), (), _arg)) \
     SYS_MARG(SYS_ARGS_APPLY_10(_macro, _extra, _args))
 #define SYS_ARGS_APPLY_12(_macro, _extra, _arg, _args...) \
-    SYS_SELECT(SYS_ARGS_MACRO(_macro, 4, _extra, _arg), , _arg) \
+    SYS_EXPAND(SYS_SELECT((SYS_ARGS_MACRO(_macro, 4, _extra, _arg)), (), _arg)) \
     SYS_MARG(SYS_ARGS_APPLY_11(_macro, _extra, _args))
 #define SYS_ARGS_APPLY_13(_macro, _extra, _arg, _args...) \
-    SYS_SELECT(SYS_ARGS_MACRO(_macro, 3, _extra, _arg), , _arg) \
+    SYS_EXPAND(SYS_SELECT((SYS_ARGS_MACRO(_macro, 3, _extra, _arg)), (), _arg)) \
     SYS_MARG(SYS_ARGS_APPLY_12(_macro, _extra, _args))
 #define SYS_ARGS_APPLY_14(_macro, _extra, _arg, _args...) \
-    SYS_SELECT(SYS_ARGS_MACRO(_macro, 2, _extra, _arg), , _arg) \
+    SYS_EXPAND(SYS_SELECT((SYS_ARGS_MACRO(_macro, 2, _extra, _arg)), (), _arg)) \
     SYS_MARG(SYS_ARGS_APPLY_13(_macro, _extra, _args))
 #define SYS_ARGS_APPLY_15(_macro, _extra, _arg, _args...) \
-    SYS_SELECT(SYS_ARGS_MACRO(_macro, 1, _extra, _arg), , _arg) \
+    SYS_EXPAND(SYS_SELECT((SYS_ARGS_MACRO(_macro, 1, _extra, _arg)), (), _arg)) \
     SYS_MARG(SYS_ARGS_APPLY_14(_macro, _extra, _args))
 #define SYS_ARGS_APPLY_16(_macro, _extra, _arg, _args...) \
-    SYS_SELECT(SYS_ARGS_MACRO(_macro, 0, _extra, _arg), , _arg) \
+    SYS_EXPAND(SYS_SELECT((SYS_ARGS_MACRO(_macro, 0, _extra, _arg)), (), _arg)) \
     SYS_MARG(SYS_ARGS_APPLY_15(_macro, _extra, _args))
 
 #define _SYS_ARGS_APPLY(_args...) SYS_ARGS_APPLY_16(_args)
@@ -80,14 +79,14 @@
 
 #define _SYS_ARG_GET(_macro, _arg, _more...) _macro(_arg, ## _more)
 #define SYS_ARG_GET(_what, _arg, _more...) \
-    SYS_SELECT( \
-        _SYS_ARG_GET( \
-            SYS_GLUE(SYS_ARG_, SYS_GET(3, SYS_EXPAND(_arg)), _, _what), \
-            _arg, ## _more \
+    SYS_EXPAND(SYS_SELECT( \
+        (_SYS_ARG_GET( \
+             SYS_GLUE(SYS_ARG_, SYS_GET(3, SYS_EXPAND(_arg)), _, _what), \
+             _arg, ## _more) \
         ), \
-        SYS_ARG_##_what(_arg, ## _more), \
+        (SYS_ARG_##_what(_arg, ## _more)), \
         SYS_GET(3, SYS_EXPAND(_arg)) \
-    )
+    ))
 
 #define SYS_ARG_INDEX(_arg, _more...) SYS_GET(0, SYS_EXPAND(_arg))
 
@@ -99,6 +98,8 @@
     (_dst)->SYS_ARG_NAME(_arg) = SYS_ARG_NAME(_arg)
 #define SYS_ARG_LOAD(_arg, _src, _more...) (_src)->SYS_ARG_NAME(_arg)
 #define SYS_ARG_FREE(_arg, _src, _more...) do { } while (0)
+#define SYS_ARG_INIT(_arg, _more...) \
+    SYS_ARG_FIELD(_arg, ## _more) = (SYS_ARG_TYPE(_arg, ## _more))0
 
 #define SYS_ARG_PTR_TYPE(_arg, _more...) SYS_ARG_TYPE(_arg, ## _more) *
 #define SYS_ARG_PTR_NAME(_arg, _more...) SYS_ARG_NAME(_arg, ## _more)
@@ -112,6 +113,8 @@
     &(_src)->SYS_ARG_NAME(_arg, ## _more)
 #define SYS_ARG_PTR_FREE(_arg, _src, _more...) \
     SYS_GET(5, SYS_EXPAND(_arg))(&(_src)->SYS_ARG_NAME(_arg, ## _more))
+#define SYS_ARG_PTR_INIT(_arg, _more...) \
+    SYS_ARG_TYPE(_arg, ## _more) * SYS_ARG_NAME(_arg, ## _more) = NULL
 
 #define SYS_ARG_COPY_TYPE(_arg, _more...) SYS_ARG_TYPE(_arg, ## _more)
 #define SYS_ARG_COPY_NAME(_arg, _more...) SYS_ARG_NAME(_arg, ## _more)
@@ -124,6 +127,8 @@
     SYS_ARG_LOAD(_arg, _src, ## _more)
 #define SYS_ARG_COPY_FREE(_arg, _src, _more...) \
     SYS_GET(5, SYS_EXPAND(_arg))((_src)->SYS_ARG_NAME(_arg, ## _more))
+#define SYS_ARG_COPY_INIT(_arg, _more...) \
+    SYS_ARG_FIELD(_arg, ## _more) = NULL
 
 #define SYS_ARG_ARRAY_TYPE(_arg, _more...) SYS_ARG_TYPE(_arg, ## _more)
 #define SYS_ARG_ARRAY_NAME(_arg, _more...) SYS_ARG_NAME(_arg, ## _more)
@@ -138,6 +143,8 @@
     *(SYS_ARG_TYPE(_arg, ## _more) *)&(_src)->SYS_ARG_NAME(_arg, ## _more)
 #define SYS_ARG_ARRAY_FREE(_arg, _src, _more...) \
     SYS_ARG_FREE(_arg, _src, ## _more)
+#define SYS_ARG_ARRAY_INIT(_arg, _more...) \
+    SYS_ARG_TYPE(_arg, ## _more) SYS_ARG_NAME(_arg, ## _more) = NULL
 
 #define ARG_TYPE(_arg, _more...) SYS_ARG_GET(TYPE, _arg, ## _more)
 #define ARG_NAME(_arg, _more...) SYS_ARG_GET(NAME, _arg, ## _more)
@@ -146,6 +153,7 @@
 #define ARG_SAVE(_arg, _more...) SYS_ARG_GET(SAVE, _arg, ## _more)
 #define ARG_LOAD(_arg, _more...) SYS_ARG_GET(LOAD, _arg, ## _more)
 #define ARG_FREE(_arg, _more...) SYS_ARG_GET(FREE, _arg, ## _more)
+#define ARG_INIT(_arg, _more...) SYS_ARG_GET(INIT, _arg, ## _more)
 
 #define SYS_ARGS_STRUCT(_name) struct _sys_args_##_name
 #define SYS_ARGS_TYPE(_name) sys_args_##_name##_t
@@ -168,6 +176,8 @@
     SYS_ARGS_APPLY(ARG_LOAD, _args, _src, ## _more)
 #define SYS_ARGS_FREE(_src, _args, _more...) \
     SYS_JOIN(SEMIC, SYS_ARGS_APPLY(ARG_FREE, _args, _src, ## _more))
+#define SYS_ARGS_INIT(_args, _more...) \
+    SYS_JOIN(SEMIC, SYS_ARGS_APPLY(ARG_INIT, _args, ## _more))
 
 #define __SYS_ARGS_COMBINE(_dummy, _args...) (_args)
 #define _SYS_ARGS_COMBINE(_args...) __SYS_ARGS_COMBINE(_args)

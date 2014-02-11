@@ -21,6 +21,28 @@
 #ifndef __SYS_GF_H__
 #define __SYS_GF_H__
 
+#define SYS_ARG_IOV_TYPE(_arg, _more...) sys_iovec_t *
+#define SYS_ARG_IOV_NAME(_arg, _more...) \
+    SYS_GLUE(SYS_ARG_NAME(_arg, ## _more), _iovec), \
+    SYS_GLUE(SYS_ARG_NAME(_arg, ## _more), _count)
+#define SYS_ARG_IOV_FIELD(_arg, _more...) \
+    sys_iovec_t SYS_ARG_NAME(_arg, ## _more)
+#define SYS_ARG_IOV_DECL(_arg, _more...) \
+    struct iovec * SYS_GLUE(SYS_ARG_NAME(_arg, ## _more), _iovec), \
+    int32_t SYS_GLUE(SYS_ARG_NAME(_arg, ## _more), _count)
+#define SYS_ARG_IOV_SAVE(_arg, _dst, _more...) \
+    SYS_GET(4, SYS_EXPAND(_arg))(&(_dst)->SYS_ARG_NAME(_arg, ## _more), \
+                              SYS_GLUE(SYS_ARG_NAME(_arg, ## _more), _iovec), \
+                              SYS_GLUE(SYS_ARG_NAME(_arg, ## _more), _count))
+#define SYS_ARG_IOV_LOAD(_arg, _src, _more...) \
+    (_src)->SYS_ARG_NAME(_arg, ## _more).iovec, \
+    (_src)->SYS_ARG_NAME(_arg, ## _more).count
+#define SYS_ARG_IOV_FREE(_arg, _src, _more...) \
+    SYS_GET(5, SYS_EXPAND(_arg))(&(_src)->SYS_ARG_NAME(_arg, ## _more))
+#define SYS_ARG_IOV_INIT(_arg, _more...) \
+    struct iovec * SYS_GLUE(SYS_ARG_NAME(_arg, ## _more), _iovec) = NULL, \
+    int32_t SYS_GLUE(SYS_ARG_NAME(_arg, ## _more), _count) = 0
+
 #define SYS_GF_HANDLERS_DECLARE(_fop) \
     void sys_gf_handler_##_fop##_wind(call_frame_t * frame, void * cookie, \
                                       xlator_t * xl, uintptr_t * cbk, \
