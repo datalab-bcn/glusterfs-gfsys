@@ -477,13 +477,27 @@ int32_t sys_tsc_calibrate(void)
                 E()
             );
 
-    sys_time_now(&end);
-    __sys_tsc_sync();
-    end_tsc = __sys_tsc_read();
-
     if (error == 0)
     {
+        sys_time_now(&end);
+        __sys_tsc_sync();
+        end_tsc = __sys_tsc_read();
+
         sys_time_sub(&end, &start);
+        if (sys_time_serial(&end) < 1000)
+        {
+            sys_time_set_rel(&end, 1, 0);
+            sys_time_add(&end, &start);
+            while ((clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME,
+                                    &end, NULL) != 0) &&
+                   (errno == EINTR));
+
+            sys_time_now(&end);
+            __sys_tsc_sync();
+            end_tsc = __sys_tsc_read();
+
+            sys_time_sub(&end, &start);
+        }
         end_tsc -= start_tsc;
 
         min = INT64_MAX;
@@ -504,7 +518,10 @@ int32_t sys_tsc_calibrate(void)
         logD("Total cycles: %ld", end_tsc);
         logD("Total time: %lu.%09lu", end.tv_sec, end.tv_nsec);
         logD("Ratio: %lu cycles/ms", end_tsc / sys_time_serial(&end));
-        logD("Error: 0.5 ms every %lu hours", end_tsc * 5 / (sys_time_serial(&end) * max * 36));
+        if (max > 0)
+        {
+            logD("Error: 0.5 ms every %lu hours", end_tsc * 5 / (sys_time_serial(&end) * max * 36));
+        }
 
         sys_tsc_start = start_tsc;
         sys_tsc_start_ms = sys_time_serial(&start);
