@@ -507,12 +507,22 @@ err_t sys_gf_initialize_log(glusterfs_ctx_t * ctx)
         ctx->cmd_args.log_file = "-";
     }
 
+// TODO: It should exist a better way to detect gluster version
+#if GD_OP_VERSION_MAX > 2
+    SYS_CODE(
+        gf_log_init, (ctx, ctx->cmd_args.log_file, NULL),
+        EINVAL,
+        E(),
+        RETERR()
+    );
+#else
     SYS_CODE(
         gf_log_init, (ctx, ctx->cmd_args.log_file),
         EINVAL,
         E(),
         RETERR()
     );
+#endif
 
     gf_log_set_loglevel(ctx->cmd_args.log_level);
 
