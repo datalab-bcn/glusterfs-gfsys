@@ -202,7 +202,7 @@ static __inline int64_t cpu_rdtsc(void)
         typeof(*(_ptr)) __tmp_data = *(_ptr); \
         if ((_memmodel) >= memory_order_acquire) \
         { \
-            barrier(); \
+            cpu_barrier(); \
         } \
         __tmp_data; \
     })
@@ -212,7 +212,7 @@ static __inline int64_t cpu_rdtsc(void)
     { \
         if ((_memmodel) >= memory_order_release) \
         { \
-            barrier(); \
+            cpu_barrier(); \
         } \
         *(_ptr) = (_value); \
     } while (0)
