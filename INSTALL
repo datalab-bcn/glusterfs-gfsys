@@ -2,7 +2,8 @@
 Installation
 ============
 
-GlusterFS is required to be compiled and installed from sources.
+GlusterFS is required to be compiled and installed from sources. It's also
+needed gcc version 4.5 or newer and make version 3.82 or newer.
 
 1. ./autogen.sh
 2. ./configure --with-glusterfs=<glusterfs path>
