@@ -36,7 +36,7 @@ static inline void sys_fd_release(fd_t * src)
     if (src != NULL)
     {
 //        logD("fd_unref(%p): %d", src, src->refcount);
-//        fd_unref(src);
+        fd_unref(src);
     }
 }
 
