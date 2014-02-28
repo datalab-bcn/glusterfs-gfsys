@@ -23,7 +23,7 @@ libgfsys_la_SOURCES += sys-dict.c
 libgfsys_la_SOURCES += sys-dirent.c
 libgfsys_la_SOURCES += sys.c
 
-libgfsys_la_LIBADD = $(gfdir)/libglusterfs/src/libglusterfs.la
+libgfsys_la_LIBADD = $(gfdir)/libglusterfs/src/libglusterfs.la -lrt
 
 # Hack to precompile a header
 
