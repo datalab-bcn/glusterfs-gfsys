@@ -56,7 +56,11 @@
         SYS_GF_FOP_CALL_TYPE(_fop) * args; \
         logT("SYS-GF: fop call wind handler '" #_fop "'"); \
         args = (SYS_GF_FOP_CALL_TYPE(_fop) *)data; \
-        SYS_IO(sys_gf_##_fop##_wind, (args->frame, cookie, xl, \
+        if (frame == NULL) \
+        { \
+            frame = args->frame; \
+        } \
+        SYS_IO(sys_gf_##_fop##_wind, (frame, cookie, xl, \
                                       SYS_ARGS_LOAD(args, \
                                                     (SYS_GF_ARGS_##_fop))), \
                cbk, to); \
@@ -70,7 +74,11 @@
         SYS_GF_FOP_CALL_TYPE(_fop) * args; \
         logT("SYS-GF: fop call wind_tail handler '" #_fop "'"); \
         args = (SYS_GF_FOP_CALL_TYPE(_fop) *)data; \
-        SYS_IO(sys_gf_##_fop##_wind_tail, (args->frame, xl, \
+        if (frame == NULL) \
+        { \
+            frame = args->frame; \
+        } \
+        SYS_IO(sys_gf_##_fop##_wind_tail, (frame, xl, \
                                            SYS_ARGS_LOAD(args, \
                                                       (SYS_GF_ARGS_##_fop))), \
                cbk, to); \
@@ -108,7 +116,11 @@
         SYS_GF_CBK_CALL_TYPE(_fop) * args; \
         logT("SYS-GF: cbk call unwind handler '" #_fop "'"); \
         args = (SYS_GF_CBK_CALL_TYPE(_fop) *)data; \
-        SYS_IO(sys_gf_##_fop##_unwind, (args->frame, args->op_ret, \
+        if (frame == NULL) \
+        { \
+            frame = args->frame; \
+        } \
+        SYS_IO(sys_gf_##_fop##_unwind, (frame, args->op_ret, \
                                         args->op_errno, \
                                         SYS_ARGS_LOAD(args, \
                                                 (SYS_GF_ARGS_##_fop##_cbk))), \
@@ -124,7 +136,11 @@
         SYS_GF_CBK_CALL_TYPE(_fop) * args; \
         logT("SYS-GF: cbk call unwind_error handler '" #_fop "'"); \
         args = (SYS_GF_CBK_CALL_TYPE(_fop) *)data; \
-        SYS_IO(sys_gf_##_fop##_unwind_error, (args->frame, op_errno, xdata), \
+        if (frame == NULL) \
+        { \
+            frame = args->frame; \
+        } \
+        SYS_IO(sys_gf_##_fop##_unwind_error, (frame, op_errno, xdata), \
                cbk, to); \
     } \
     sys_gf_handlers_t sys_gf_handlers_fop_##_fop = \
